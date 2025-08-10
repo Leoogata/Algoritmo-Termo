@@ -1,21 +1,37 @@
 import csv
-import sys
+import re
 
-# Increase CSV field size limit
-csv.field_size_limit(sys.maxsize)
-
-# Input and output file paths
 input_file = './dados/palavras.txt'
 output_file = './dados/palavras.csv'
 
-# Open the txt file using the correct encoding
-with open(input_file, mode='r', encoding='latin1') as txt_file:
-    reader = csv.reader(txt_file, delimiter=',')  # Use comma as delimiter
+# Expressão regular para linhas no formato:
+# número(s) seguido de espaço(s), depois qualquer sequência de caracteres (token)
+pattern = re.compile(r'^(\d+)\s+(.*)$')
 
-    # Write to CSV file
-    with open(output_file, mode='w', newline='', encoding='utf-8') as csv_file:
-        writer = csv.writer(csv_file)
-        for row in reader:
-            writer.writerow(row)
+# Abre arquivo de entrada com encoding latin-1 e arquivo de saída CSV em utf-8
+with open(input_file, 'r', encoding='latin-1') as infile, \
+     open(output_file, 'w', encoding='utf-8', newline='') as outfile:
 
-print("Conversion completed successfully!")
+    writer = csv.writer(outfile)
+    writer.writerow(['count', 'token'])  # Cabeçalho do CSV
+
+    total = 0      # Contador de linhas processadas com sucesso
+    skipped = 0    # Contador de linhas ignoradas por formato inválido
+
+    # Percorre cada linha do arquivo de entrada, numerando para debug
+    for line_num, line in enumerate(infile, start=1):
+        stripped = line.strip()
+        if not stripped:
+            continue  # Ignora linhas vazias
+
+        match = pattern.match(stripped)
+        if not match:
+            print(f"⚠️ Skipped line {line_num}: {stripped}")  # Log de linhas mal formatadas
+            skipped += 1
+            continue
+
+        count, token = match.groups()
+        writer.writerow([count, token])  # Escreve linha formatada no CSV
+        total += 1
+
+print(f"✅ Done! Parsed {total} lines. Skipped {skipped} malformed lines.")
