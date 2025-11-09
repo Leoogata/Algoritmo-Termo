@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Carrega o dataset de palavras filtradas com frequência de uso
-df = pd.read_csv("dados/palavras_filtradas.csv")
+df = pd.read_csv("dictionary/palavras_filtradas.csv")
 
 def termoSolver(df, i):
     """

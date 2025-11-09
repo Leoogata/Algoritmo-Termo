@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Carrega o dataset base de palavras com frequência
-dfBase = pd.read_csv("dados/palavras_filtradas.csv")
+dfBase = pd.read_csv("dictionary/palavras_filtradas.csv")
 
 # Cópias independentes para os dois conjuntos de palavras
 dfWord1 = dfBase.copy()
