@@ -1,4 +1,6 @@
 import pandas as pd
+from backend.app import collections
+from backend.services.termo_service import add_termo
 
 # Carrega o dataset de palavras filtradas com frequência de uso
 df = pd.read_csv("dictionary/palavras_filtradas.csv")
@@ -37,6 +39,8 @@ def termoSolver(df, i):
 
     # Condição de vitória
     if ans == "VVVVV":
+        data = {"palavra": word}
+        resultado = add_termo(collections, data)
         print("\n" + "=" * 50)
         print("  Parabéns você resolveu o termo!".center(50))   
         print("=" * 50)

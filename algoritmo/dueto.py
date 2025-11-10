@@ -1,4 +1,6 @@
 import pandas as pd
+from backend.app import collections
+from backend.services.dueto_service import add_dueto
 
 # Carrega o dataset base de palavras com frequência
 dfBase = pd.read_csv("dictionary/palavras_filtradas.csv")
@@ -10,6 +12,9 @@ dfWord2 = dfBase.copy()
 # Flags para controle de palavras resolvidas
 word1 = False
 word2 = False
+
+# Array para armazenar respostas
+arr = ["", ""]
 
 def process_feedback(df, word, ans):
     """
@@ -74,6 +79,7 @@ def duetoSolver(df1, df2, i: int, word1: bool, word2: bool):
                 break
 
         if ans1 == "VVVVV":
+            arr[0] = word
             word1 = True
         else:
             df1 = process_feedback(df1, word, ans1)
@@ -89,12 +95,15 @@ def duetoSolver(df1, df2, i: int, word1: bool, word2: bool):
                 break
 
         if ans2 == "VVVVV":
+            arr[1] = word
             word2 = True
         else:
             df2 = process_feedback(df2, word, ans2)
 
     # Condição de vitória para ambas as palavras
     if word1 and word2:
+        data = {"palavra1": arr[0], "palavra2": arr[1]}
+        resultado = add_dueto(collections, data)
         print("\n" + "=" * 50)
         print("  Parabéns você resolveu o dueto!".center(50))
         print("=" * 50)

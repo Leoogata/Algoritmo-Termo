@@ -24,73 +24,48 @@ collections = {
     "quarteto": db["quarteto"],
 }
 
-# Rota health check
 @app.route('/', methods=['GET'])
 def health_check():
     return 'API do brabo ta on', 200
 
-# Rota para adicionar palavra do termo
 @app.route('/termo', methods=['POST'])
 def create_termo():
     data = request.json
+    try:
+        response = add_termo(collections, data)
+        return jsonify(response), 201
+    except TermoError as e:
+        abort(400, description=str(e))
 
-    if "palavra" not in data:
-        abort(400, description="Campo 'palavra' é obrigatório.")
-
-    result = collections["termo"].insert_one(data)
-    return jsonify({
-        "message": "Palavra adiciona com suceso",
-        "_id": str(result.inserted_id)
-        }), 201
-
-# Rota para obter todas palavras do termo
 @app.route('/termo', methods=['GET'])
-def get_termos():
-    termos = list(collections["termo"].find())
-    for termo in termos:
-        termo["_id"] = str(termo["_id"])
-    return jsonify(termos), 200
+def list_termos():
+    return jsonify(get_termos(collections)), 200
 
-# Rota para adicionar palavras do dueto
 @app.route('/dueto', methods=['POST'])
 def create_dueto():
     data = request.json
+    try:
+        response = add_dueto(collections, data)
+        return jsonify(response), 201
+    except DuetoError as e:
+        abort(400, description=str(e))
 
-    if len(data) != 2:
-        abort(400, description="É necessário fornecer exatamente duas palavras para o dueto.") 
-
-    result = collections["dueto"].insert_one(data)
-    return jsonify({
-        "message": "Dueto adicionado com sucesso",
-        "_id": str(result.inserted_id)
-        }), 201
-
-# Rota para obter todas palavras do dueto
 @app.route('/dueto', methods=['GET'])
-def get_duetos():
-    duetos = list(collections["dueto"].find())
-    for dueto in duetos:
-        dueto["_id"] = str(dueto["_id"])
-    return jsonify(duetos), 200
+def list_duetos():
+    return jsonify(get_duetos(collections)), 200
 
-# Rota para adicionar palavras do quarteto
 @app.route('/quarteto', methods=['POST'])
 def create_quarteto():
     data = request.json
+    try:
+        response = add_quarteto(collections, data)
+        return jsonify(response), 201
+    except QuartetoError as e:
+        abort(400, description=str(e))
 
-    if len(data) != 4:
-        abort(400, description="É necessário fornecer exatamente quatro palavras para o quarteto.") 
-
-    result = collections["quarteto"].insert_one(data)
-    return jsonify({
-        "message": "Quarteto adicionado com sucesso",
-        "_id": str(result.inserted_id)
-        }), 201
-
-# Rota para obter todas palavras do quarteto
 @app.route('/quarteto', methods=['GET'])
-def get_quartetos():   
-    quartetos = list(collections["quarteto"].find())
-    for quarteto in quartetos:
-        quarteto["_id"] = str(quarteto["_id"])
-    return jsonify(quartetos), 200
+def list_quartetos():
+    return jsonify(get_quartetos(collections)), 200
+
+if __name__ == "__main__":
+    app.run(debug=True)

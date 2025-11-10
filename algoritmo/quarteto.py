@@ -1,4 +1,6 @@
 import pandas as pd
+from backend.app import collections
+from backend.services.quarteto_service import add_quarteto
 
 # Carrega dataset base com palavras e suas frequências
 dfBase = pd.read_csv("dictionary/palavras_filtradas.csv")
@@ -14,6 +16,9 @@ word1 = False
 word2 = False
 word3 = False
 word4 = False
+
+# Array para armazenar respostas
+arr = ["", "", "", ""]
 
 def process_feedback(df, word, ans):
     """
@@ -78,6 +83,7 @@ def quartetoSolver(df1, df2, df3, df4, i: int, word1: bool, word2: bool, word3: 
             else:
                 break
         if ans1 == "VVVVV":
+            arr[0] = word
             word1 = True
         else:
             df1 = process_feedback(df1, word, ans1)
@@ -90,6 +96,7 @@ def quartetoSolver(df1, df2, df3, df4, i: int, word1: bool, word2: bool, word3: 
             else:
                 break
         if ans2 == "VVVVV":
+            arr[1] = word
             word2 = True
         else:
             df2 = process_feedback(df2, word, ans2)
@@ -102,6 +109,7 @@ def quartetoSolver(df1, df2, df3, df4, i: int, word1: bool, word2: bool, word3: 
             else:
                 break
         if ans3 == "VVVVV":
+            arr[2] = word
             word3 = True
         else:
             df3 = process_feedback(df3, word, ans3)
@@ -114,12 +122,15 @@ def quartetoSolver(df1, df2, df3, df4, i: int, word1: bool, word2: bool, word3: 
             else:
                 break
         if ans4 == "VVVVV":
+            arr[3] = word
             word4 = True
         else:
             df4 = process_feedback(df4, word, ans4)
 
     # Verifica se todas as palavras já foram descobertas
     if word1 and word2 and word3 and word4:
+        data = {"palavra1": arr[0], "palavra2": arr[1], "palavra3": arr[2], "palavra4": arr[3]}
+        resultado = add_quarteto(collections, data)
         print("\n" + "=" * 50)
         print("  Parabéns você resolveu o quarteto!".center(50))
         print("=" * 50)
