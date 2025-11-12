@@ -2,7 +2,9 @@ from flask import Flask, jsonify, request, abort
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
-
+from services.termo_service import add_termo, get_termos
+from services.dueto_service import add_dueto, get_duetos
+from services.quarteto_service import add_quarteto, get_quartetos
 # Inicializar a aplicação Flask
 app = Flask(__name__)
 
